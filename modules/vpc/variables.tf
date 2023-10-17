@@ -9,3 +9,25 @@ variable "public_subnet_cidrs" {
   type        = list(string)
   default     = ["172.20.1.0/24", "172.20.2.0/24"]
 }
+
+variable "nat_ami" {
+  description = "ami to create nat instance"
+  type        = string
+  default     = "ami-036fb5fe12bc53979"
+}
+
+variable "instance_type" {
+  description = "instance type"
+  default     = "t2.micro"
+}
+
+variable "internet_cidr" {
+  description = "cidr block for internet"
+  type        = string
+  default     = "0.0.0.0/0"
+}
+
+variable "ssh_key_name" {
+  type    = string
+  default = "keypair-l1"
+}
