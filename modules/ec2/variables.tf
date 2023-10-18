@@ -28,6 +28,11 @@ variable "vpc_cidr" {
   default     = "172.20.0.0/16"
 }
 
+variable "default-name" {
+  type    = string
+  default = "shopizer"
+}
+
 variable "public_subnet_cidrs" {
   description = "Public subnet CIDR"
   type        = list(string)
@@ -50,4 +55,9 @@ variable "frontend_subnet_cidrs" {
   type        = list(string)
   default     = ["172.20.3.0/24", "172.20.4.0/24"]
 
+}
+
+variable "ubuntu_ami" {
+  type    = string
+  default = "ami-0df7a207adb9748c7"
 }
