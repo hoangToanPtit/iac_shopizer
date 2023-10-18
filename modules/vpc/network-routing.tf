@@ -66,7 +66,7 @@ resource "aws_route_table" "public_route_table" {
 
 # Private route table
 resource "aws_route_table" "private_route_table" {
-  count = length(aws_network_interface.network_interface)
+  count  = length(aws_network_interface.network_interface)
   vpc_id = aws_vpc.shopzer-vpc.id
 
   route {
@@ -78,7 +78,7 @@ resource "aws_route_table" "private_route_table" {
     Name        = "Private Route Table"
     Description = "Route table created by terraform"
   }
-  depends_on = [ aws_network_interface.network_interface ]
+  depends_on = [aws_network_interface.network_interface]
 }
 
 # Route Table Association
