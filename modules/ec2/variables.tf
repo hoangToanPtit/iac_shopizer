@@ -61,3 +61,8 @@ variable "ubuntu_ami" {
   type    = string
   default = "ami-0df7a207adb9748c7"
 }
+
+variable "default_ssh_port" {
+  type    = string
+  default = "2222"
+}
