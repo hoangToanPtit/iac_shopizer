@@ -1,12 +1,12 @@
 # Bastion SG
-resource "aws_security_group" "bation-sg" {
+resource "aws_security_group" "bastion-sg" {
   name        = "Bastion-Host-SG"
   description = "Security Group for Bastion host created by terraform"
   vpc_id      = var.vpc-id
 
   ingress = [
     {
-      description      = "Ingress CIDR"
+      description      = "Allow ssh access from internet"
       from_port        = 22
       to_port          = 22
       protocol         = "tcp"
@@ -20,11 +20,22 @@ resource "aws_security_group" "bation-sg" {
 
   egress = [
     {
-      description      = "Allow access to internet"
+      description      = "Allow access to this VPC"
       from_port        = 22
       to_port          = 22
       protocol         = "tcp"
       cidr_blocks      = [var.vpc_cidr]
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow access to internet"
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = [var.internet_cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
@@ -39,13 +50,15 @@ resource "aws_security_group" "bation-sg" {
 }
 
 resource "aws_instance" "bastion-host" {
-  ami             = var.ubuntu_ami
-  instance_type   = "t2.micro"
-  key_name        = var.ssh_key_name
-  subnet_id       = var.public_subnet_ids[0] # first public subnet
-  security_groups = [aws_security_group.bation-sg]
-  user_data       = <<-EOF
-  #!/bin/bash
+  ami                         = var.ubuntu_ami
+  instance_type               = "t2.micro"
+  key_name                    = var.ssh_key_name
+  subnet_id                   = var.public_subnet_ids[0] # first public subnet
+  vpc_security_group_ids      = [aws_security_group.bastion-sg.id]
+  associate_public_ip_address = true
+
+  user_data = <<-EOF
+    #!/bin/bash
     echo "change default username"
     user=${var.default-name}
     usermod  -l $user ubuntu
@@ -60,4 +73,6 @@ resource "aws_instance" "bastion-host" {
   tags = {
     Name = "Bastion host creating by terraform"
   }
+
+  depends_on = [aws_security_group.bastion-sg]
 }
