@@ -17,26 +17,28 @@ sudo perl -pi -e 's/^#?Port 22$/Port 2222/' /etc/ssh/sshd_config service
 sudo systemctl restart sshd
 
 # Install mysql
+sudo apt-get update
+sudo apt-get install -y wget debconf-utils
 
-echo "installing mysql"
-sudo apt update
-sudo apt install -y mysql-server
+echo "mysql-server mysql-server/root_password password root" | sudo debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password root" | sudo debconf-set-selections
 
-# start mysql
+wget https://dev.mysql.com/get/mysql-apt-config_0.8.15-1_all.deb
+sudo dpkg -i mysql-apt-config_0.8.15-1_all.deb
+
+sudo DEBIAN_FRONTEND=noninteractive apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
+
 sudo systemctl start mysql
 sudo systemctl enable mysql
 
-# waiting for mysql start
-sleep 5
-
-# root password
-sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'shopizer';"
+rm mysql-apt-config_0.8.15-1_all.deb
 
 # create database, username, password
-sudo mysql -u root -p"shopizer" -e "CREATE USER 'shopizer'@'%' IDENTIFIED BY 'shopizer';"
-sudo mysql -u root -p"shopizer" -e "CREATE DATABASE SALESMANAGER;"
-sudo mysql -u root -p"shopizer" -e "GRANT ALL PRIVILEGES ON YOUR_DATABASE_NAME.* TO 'shopizer'@'%';"
-sudo mysql -u root -p"shopizer" -e "FLUSH PRIVILEGES;"
+sudo mysql -u root -p"root" -e "CREATE USER 'shopizer'@'%' IDENTIFIED BY 'shopizer';"
+sudo mysql -u root -p"root" -e "CREATE DATABASE SALESMANAGER;"
+sudo mysql -u root -p"root" -e "GRANT ALL PRIVILEGES ON SALESMANAGER.* TO 'shopizer'@'%';"
+sudo mysql -u root -p"root" -e "FLUSH PRIVILEGES;"
 
 # allow remote access
 sudo sed -i 's/bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
