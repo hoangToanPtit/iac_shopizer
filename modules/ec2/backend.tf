@@ -75,12 +75,12 @@ resource "aws_security_group" "backend-sg" {
 }
 
 resource "aws_instance" "backend" {
-  count         = length(var.backend_subnet_ids)
+  count                       = length(var.backend_subnet_ids)
   ami                         = var.ubuntu_ami
   instance_type               = "t2.medium"
   key_name                    = var.ssh_key_name
   subnet_id                   = element(var.backend_subnet_ids, count.index)
-  security_groups             = [aws_security_group.backend-sg.id]
+  vpc_security_group_ids      = [aws_security_group.backend-sg.id]
   associate_public_ip_address = false
   user_data                   = "${file("${path.module}/beinstance.sh")}"
 

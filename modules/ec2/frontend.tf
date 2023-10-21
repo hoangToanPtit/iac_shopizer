@@ -22,7 +22,7 @@ resource "aws_security_group" "frontend-sg" {
     #   from_port        = 80
     #   to_port          = 80
     #   protocol         = "http"
-    #   cidr_blocks      = [module.vpc.public_subnet_cidrs]
+    #   cidr_blocks      = 
     #   ipv6_cidr_blocks = []
     #   prefix_list_ids  = []
     #   security_groups  = []
@@ -64,30 +64,14 @@ resource "aws_security_group" "frontend-sg" {
 }
 
 resource "aws_instance" "frontend" {
-  count         = length(var.frontend_subnet_ids)
+  count                       = length(var.frontend_subnet_ids)
   ami                         = var.ubuntu_ami
   instance_type               = "t2.micro"
   key_name                    = var.ssh_key_name
   subnet_id                   = element(var.frontend_subnet_ids, count.index)
-  vpc_security_group_ids      = [aws_security_group.frontend-sg]
+  vpc_security_group_ids      = [aws_security_group.frontend-sg.id]
   associate_public_ip_address = false
-
-  user_data = <<-EOF
-    #!/bin/bash
-    echo "change default username"
-    user=${var.default-name}
-    usermod  -l $user ubuntu
-    groupmod -n $user ubuntu
-    usermod  -d /home/$user -m $user
-    if [ -f /etc/sudoers.d/90-cloudimg-ubuntu ]; then
-    mv /etc/sudoers.d/90-cloudimg-ubuntu /etc/sudoers.d/90-cloud-init-users
-    fi
-    perl -pi -e "s/ubuntu/$user/g;" /etc/sudoers.d/90-cloud-init-users
-
-    echo "change default port"
-    sudo perl -pi -e 's/^#?Port 22$/Port 2222/' /etc/ssh/sshd_config 
-    sudo systemctl restart sshd
-  EOF
+  user_data                   = "${file("${path.module}/feinstance.sh")}"
 
   tags = {
     Name = "Frontend creating by terraform"
