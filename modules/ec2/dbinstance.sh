@@ -17,8 +17,6 @@ sudo perl -pi -e 's/^#?Port 22$/Port 2222/' /etc/ssh/sshd_config service
 sudo systemctl restart sshd
 
 # Install mysql
-sudo apt-get update
-sudo apt-get install -y wget debconf-utils
 
 echo "mysql-server mysql-server/root_password password root" | sudo debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password root" | sudo debconf-set-selections
