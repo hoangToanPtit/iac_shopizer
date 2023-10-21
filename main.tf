@@ -19,3 +19,4 @@ module "elb" {
   depends_on = [module.vpc]
 
 }
+
