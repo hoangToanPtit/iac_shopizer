@@ -50,5 +50,8 @@ variable "database_subnet_cidrs" {
   description = "Subnet for frontend"
   type        = list(string)
   default     = ["172.20.7.0/24"]
+}
 
+variable "tcp_protocol" {
+  default = "tcp"
 }

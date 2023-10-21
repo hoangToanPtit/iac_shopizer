@@ -1,8 +1,3 @@
-# Variables
-variable "tcp_protocol" {
-  default = "tcp"
-
-}
 # NAT instance SG
 resource "aws_security_group" "nat_sg" {
   name        = "NAT_instance_security_group"

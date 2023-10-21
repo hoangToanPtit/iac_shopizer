@@ -54,7 +54,7 @@ resource "aws_instance" "bastion-host" {
   instance_type               = "t2.micro"
   key_name                    = var.ssh_key_name
   subnet_id                   = var.public_subnet_ids[0] # first public subnet
-  vpc_security_group_ids      = [aws_security_group.bastion-sg.id]
+  vpc_security_group_ids      = [aws_security_group.bastion-sg.id] # security_groups or vpc_security_group_ids ?
   associate_public_ip_address = true
 
   user_data = <<-EOF
