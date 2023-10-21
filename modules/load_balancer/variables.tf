@@ -1,7 +1,6 @@
 # Input variables for load balancer module
 variable "vpc_id" {
-  type    = string
-  default = "172.20.0.0/16"
+  type = string
 }
 
 variable "lb_type" {

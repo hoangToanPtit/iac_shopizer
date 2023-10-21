@@ -1,9 +1,18 @@
 module "vpc" {
   source                = "./modules/vpc"
-  vpc_cidr              = "172.20.0.0/16"
-  public_subnet_cidrs   = ["172.20.1.0/24", "172.20.2.0/24"]
-  frontend_subnet_cidrs = ["172.20.3.0/24", "172.20.4.0/24"]
-  backend_subnet_cidrs  = ["172.20.5.0/24", "172.20.6.0/24"]
-  database_subnet_cidrs = ["172.20.7.0/24"]
+  vpc_cidr              = var.vpc_cidr
+  public_subnet_cidrs   = var.public_subnet_cidrs
+  frontend_subnet_cidrs = var.frontend_subnet_cidrs
+  backend_subnet_cidrs  = var.backend_subnet_cidrs
+  database_subnet_cidrs = var.database_subnet_cidrs
+
+}
+
+module "elb" {
+  source               = "./modules/load_balancer"
+  vpc_id               = module.vpc.vpc_id
+  backend_subnet_cidrs = var.backend_subnet_cidrs
+  public_subnet_cidrs  = var.public_subnet_cidrs
+  public_subnet_ids    = module.vpc.public_subnet_ids
 
 }

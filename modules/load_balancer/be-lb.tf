@@ -40,12 +40,12 @@ resource "aws_security_group" "be_alb_sg" {
 }
 
 resource "aws_lb" "be_alb" {
-  name                             = "backend_alb"
+  name                             = "backend-alb"
   internal                         = false
-  load_balancer_type               = var.lb_type                    # application
-  security_groups                  = [aws_security_group.be_alb_sg] # choose security groups
-  subnets                          = var.public_subnet_ids          # choose public subnet
-  enable_cross_zone_load_balancing = true                           # cross zone
+  load_balancer_type               = var.lb_type                       # application
+  security_groups                  = [aws_security_group.be_alb_sg.id] # choose security groups
+  subnets                          = var.public_subnet_ids             # choose public subnet
+  enable_cross_zone_load_balancing = true                              # cross zone
   enable_deletion_protection       = false
 
   tags = {
