@@ -1,0 +1,1 @@
+# Frontend Load balancer resource
