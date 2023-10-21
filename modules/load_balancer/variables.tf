@@ -21,3 +21,10 @@ variable "public_subnet_cidrs" {
 variable "public_subnet_ids" {
   type = list(string)
 }
+
+variable "frontend_subnet_cidrs" {
+  description = "Subnet for frontend"
+  type        = list(string)
+  default     = ["172.20.3.0/24", "172.20.4.0/24"]
+
+}
