@@ -15,4 +15,6 @@ module "elb" {
   public_subnet_cidrs  = var.public_subnet_cidrs
   public_subnet_ids    = module.vpc.public_subnet_ids
 
+  depends_on = [ module.vpc ]
+
 }
