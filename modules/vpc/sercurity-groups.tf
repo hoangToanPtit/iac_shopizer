@@ -15,6 +15,17 @@ resource "aws_security_group" "nat_sg" {
       prefix_list_ids  = []
       security_groups  = []
       self             = false
+    },
+    {
+      description      = "Allow access to internet"
+      from_port        = 443
+      to_port          = 443
+      protocol         = var.tcp_protocol
+      cidr_blocks      = [var.vpc_cidr]
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
     }
   ]
 

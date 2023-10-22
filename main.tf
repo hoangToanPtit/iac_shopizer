@@ -29,7 +29,7 @@ module "ec2-instances" {
   frontend_subnet_ids       = module.vpc.frontend_subnet_ids
   public_subnet_ids         = module.vpc.public_subnet_ids
 
-  depends_on = [module.vpc]
+  depends_on = [module.vpc, module.elb]
 }
 
 
