@@ -77,3 +77,15 @@ variable "default_ssh_port" {
   type    = string
   default = "2222"
 }
+
+variable "alb_be_id" {
+  type = string
+}
+
+variable "alb_be_sg_id" {
+  type = string
+}
+
+variable "alb_be_arn" {
+  type = string
+}

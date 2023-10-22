@@ -19,6 +19,10 @@ module "elb" {
 
 }
 
+output "be_alb_dns" {
+  value = module.elb.be_dns_name
+}
+
 module "ec2-instances" {
   source = "./modules/ec2"
 
@@ -28,6 +32,9 @@ module "ec2-instances" {
   default_security_group_id = module.vpc.default_security_group_id
   frontend_subnet_ids       = module.vpc.frontend_subnet_ids
   public_subnet_ids         = module.vpc.public_subnet_ids
+  alb_be_id                 = module.elb.be_alb_id
+  alb_be_sg_id              = module.elb.be_alb_sg_id
+  alb_be_arn                = module.elb.be_alb_arn
 
   depends_on = [module.vpc, module.elb]
 }

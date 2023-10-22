@@ -7,85 +7,63 @@ resource "aws_security_group" "backend-sg" {
   ingress = [
     {
       description      = "allow all traffic"
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
-      cidr_blocks      = ["0.0.0.0/0"]
+      from_port        = 8080
+      to_port          = 8080
+      protocol         = "tcp"
+      cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = []
+      security_groups  = [var.alb_be_sg_id]
+      self             = false
+    },
+    {
+      description      = "Allow ssh access from Bastion-host"
+      from_port        = 2222
+      to_port          = 2222
+      protocol         = "tcp"
+      cidr_blocks      = []
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = [aws_security_group.bastion-sg.id]
       self             = false
     }
-    # {
-    #   description      = "Allow ssh access from Bastion-host"
-    #   from_port        = 2222
-    #   to_port          = 2222
-    #   protocol         = "tcp"
-    #   cidr_blocks      = [module.vpc.public_subnet_cidrs]
-    #   ipv6_cidr_blocks = []
-    #   prefix_list_ids  = []
-    #   security_groups  = []
-    #   self             = false
-    # },
-
-    # {
-    #   description      = "Allow access from ALB-BE"
-    #   from_port        = 8080
-    #   to_port          = 8080
-    #   protocol         = "http"
-    #   cidr_blocks      = 
-    #   ipv6_cidr_blocks = []
-    #   prefix_list_ids  = []
-    #   security_groups  = []
-    #   self             = false
-    # }
   ]
 
   egress = [
     {
-      description      = "allow all traffic"
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
-      cidr_blocks      = ["0.0.0.0/0"]
+      description      = "allow connect to db instance"
+      from_port        = 3306
+      to_port          = 3306
+      protocol         = "tcp"
+      cidr_blocks      = []
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = [aws_security_group.database-sg.id]
+      self             = false
+    },
+    {
+      description      = "Allow go to NAT port 80"
+      from_port        = 80
+      to_port          = 80
+      protocol         = "tcp"
+      cidr_blocks      = var.public_subnet_cidrs
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow go to NAT port 443"
+      from_port        = 443
+      to_port          = 443
+      protocol         = "tcp"
+      cidr_blocks      = var.public_subnet_cidrs
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
       self             = false
     }
-    # {
-    #   description      = "Allow go to DB port 3306"
-    #   from_port        = 3306
-    #   to_port          = 3306
-    #   protocol         = "tcp"
-    #   cidr_blocks      = [module.vpc.database_subnet_cidrs]
-    #   ipv6_cidr_blocks = []
-    #   prefix_list_ids  = []
-    #   security_groups  = []
-    #   self             = false
-    # },
-    # {
-    #   description      = "Allow go to NAT port 80"
-    #   from_port        = 80
-    #   to_port          = 80
-    #   protocol         = "tcp"
-    #   cidr_blocks      = [module.vpc.public_subnet_cidrs]
-    #   ipv6_cidr_blocks = []
-    #   prefix_list_ids  = []
-    #   security_groups  = []
-    #   self             = false
-    # },
-    # {
-    #   description      = "Allow go to NAT port 443"
-    #   from_port        = 443
-    #   to_port          = 443
-    #   protocol         = "tcp"
-    #   cidr_blocks      = [module.vpc.public_subnet_cidrs]
-    #   ipv6_cidr_blocks = []
-    #   prefix_list_ids  = []
-    #   security_groups  = []
-    #   self             = false
-    # }
+
   ]
 
   tags = {
@@ -110,4 +88,44 @@ resource "aws_instance" "backend" {
   }
 
   depends_on = [aws_security_group.backend-sg, aws_instance.database-instance]
+}
+
+# create target group
+resource "aws_lb_target_group" "backend_tg" {
+  name     = "backend-tg"
+  port     = 8080
+  protocol = "HTTP"
+  vpc_id   = var.vpc-id
+  health_check {
+    enabled             = true
+    healthy_threshold   = 3
+    interval            = 10
+    matcher             = 200
+    path                = "/"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    timeout             = 5
+    unhealthy_threshold = 2
+  }
+
+}
+
+# create target attachment
+resource "aws_lb_target_group_attachment" "attach-backend" {
+  count            = length(aws_instance.backend)
+  target_group_arn = aws_lb_target_group.backend_tg.arn
+  target_id        = aws_instance.backend[count.index].id
+  port             = 8080
+}
+
+# create listener
+resource "aws_lb_listener" "be_listener" {
+  load_balancer_arn = var.alb_be_arn
+  port              = "8080"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend_tg.arn
+  }
 }
