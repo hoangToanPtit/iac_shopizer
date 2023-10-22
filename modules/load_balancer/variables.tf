@@ -1,0 +1,30 @@
+# Input variables for load balancer module
+variable "vpc_id" {
+  type = string
+}
+
+variable "lb_type" {
+  type    = string
+  default = "application"
+}
+
+variable "backend_subnet_cidrs" {
+  type    = list(string)
+  default = ["172.20.5.0/24", "172.20.6.0/24"]
+}
+
+variable "public_subnet_cidrs" {
+  type    = list(string)
+  default = ["172.20.1.0/24", "172.20.2.0/24"]
+}
+
+variable "public_subnet_ids" {
+  type = list(string)
+}
+
+variable "frontend_subnet_cidrs" {
+  description = "Subnet for frontend"
+  type        = list(string)
+  default     = ["172.20.3.0/24", "172.20.4.0/24"]
+
+}

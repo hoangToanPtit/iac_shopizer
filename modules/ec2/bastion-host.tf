@@ -53,7 +53,7 @@ resource "aws_instance" "bastion-host" {
   ami                         = var.ubuntu_ami
   instance_type               = "t2.micro"
   key_name                    = var.ssh_key_name
-  subnet_id                   = var.public_subnet_ids[0] # first public subnet
+  subnet_id                   = var.public_subnet_ids[0]           # first public subnet
   vpc_security_group_ids      = [aws_security_group.bastion-sg.id] # vpc_security_group_ids cho pb > 0.12
   associate_public_ip_address = true
 

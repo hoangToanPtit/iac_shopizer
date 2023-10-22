@@ -39,8 +39,8 @@ resource "aws_security_group" "database-sg" {
 }
 
 resource "aws_network_interface" "database_ni" {
-  subnet_id   = var.database_subnet_ids[0]
-  private_ips = ["172.20.7.47"]
+  subnet_id       = var.database_subnet_ids[0]
+  private_ips     = ["172.20.7.47"]
   security_groups = [aws_security_group.database-sg.id]
   tags = {
     Name        = "db-ni"
@@ -49,10 +49,10 @@ resource "aws_network_interface" "database_ni" {
 }
 
 resource "aws_instance" "database-instance" {
-  ami                    = var.ubuntu_ami
-  instance_type          = "t2.micro"
-  key_name               = var.ssh_key_name
-  user_data              = "${file("${path.module}/dbinstance.sh")}"
+  ami           = var.ubuntu_ami
+  instance_type = "t2.micro"
+  key_name      = var.ssh_key_name
+  user_data     = file("${path.module}/dbinstance.sh")
 
   network_interface {
     network_interface_id = aws_network_interface.database_ni.id
