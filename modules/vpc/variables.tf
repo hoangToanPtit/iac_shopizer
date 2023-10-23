@@ -23,7 +23,7 @@ variable "internet_cidr" {
 }
 
 variable "ssh_key_name" {
-  type    = string
+  type = string
 }
 
 variable "frontend_subnet_cidrs" {
