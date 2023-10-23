@@ -5,6 +5,8 @@ module "vpc" {
   frontend_subnet_cidrs = var.frontend_subnet_cidrs
   backend_subnet_cidrs  = var.backend_subnet_cidrs
   database_subnet_cidrs = var.database_subnet_cidrs
+  ssh_key_name          = "keypair-l2"
+  nat_ami               = "ami-04106ae1c90766385"
 }
 
 module "elb" {
@@ -23,6 +25,10 @@ output "be_alb_dns" {
   value = module.elb.be_dns_name
 }
 
+output "fe_alb_dns" {
+  value = module.elb.fe_dns_name
+}
+
 module "ec2-instances" {
   source = "./modules/ec2"
 
@@ -35,6 +41,15 @@ module "ec2-instances" {
   alb_be_id                 = module.elb.be_alb_id
   alb_be_sg_id              = module.elb.be_alb_sg_id
   alb_be_arn                = module.elb.be_alb_arn
+  alb_be_dns                = module.elb.be_dns_name
+
+  alb_fe_id    = module.elb.fe_alb_id
+  alb_fe_sg_id = module.elb.fe_alb_sg_id
+  alb_fe_arn   = module.elb.fe_alb_arn
+  alb_fe_dns   = module.elb.fe_dns_name
+
+  ssh_key_name = "keypair-l2"
+  ubuntu_ami   = "ami-0fc5d935ebf8bc3bc"
 
   depends_on = [module.vpc, module.elb]
 }

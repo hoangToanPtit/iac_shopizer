@@ -29,7 +29,7 @@ variable "internet_cidr" {
 
 variable "ssh_key_name" {
   type    = string
-  default = "keypair-l1"
+  default = "keypair-l2"
 }
 
 variable "frontend_subnet_cidrs" {

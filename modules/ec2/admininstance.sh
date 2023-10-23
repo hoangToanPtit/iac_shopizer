@@ -46,11 +46,11 @@ sudo systemctl enable containerd.service
 sudo service docker restart
 
 # Setup frontend
-sudo mkdir -p /var/log/nginx
+mkdir -p /var/log/
+docker pull ht04/shopizer-service:1.0.1
 
-docker run -d --restart always \
--e "APP_MERCHANT=DEFAULT" \
--e "APP_BASE_URL=http://f-alb-be-1777158846.us-east-1.elb.amazonaws.com:8080" \
--p 80:80 \
--v /var/log/nginx:/var/log/nginx \
-ht04/shopizer-shop:1.0.1
+docker run -d \
+-p 8080:8080 \
+--restart always \
+-v /var/log:/opt/app/logs \
+ht04/shopizer-service:1.0.1

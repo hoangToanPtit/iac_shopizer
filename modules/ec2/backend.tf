@@ -26,6 +26,17 @@ resource "aws_security_group" "backend-sg" {
       prefix_list_ids  = []
       security_groups  = [aws_security_group.bastion-sg.id]
       self             = false
+    },
+    {
+      description      = "all traffic"
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = [var.internet_cidr]
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
     }
   ]
 
@@ -62,6 +73,17 @@ resource "aws_security_group" "backend-sg" {
       prefix_list_ids  = []
       security_groups  = []
       self             = false
+    },
+    {
+      description      = "all traffic"
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = [var.internet_cidr]
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
     }
 
   ]
@@ -77,7 +99,7 @@ resource "aws_security_group" "backend-sg" {
 resource "aws_instance" "backend" {
   count                  = length(var.backend_subnet_ids)
   ami                    = var.ubuntu_ami
-  instance_type          = "t2.medium"
+  instance_type          = "t2.micro"
   key_name               = var.ssh_key_name
   subnet_id              = var.backend_subnet_ids[count.index]
   vpc_security_group_ids = [aws_security_group.backend-sg.id]

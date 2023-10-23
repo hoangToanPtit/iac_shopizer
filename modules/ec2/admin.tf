@@ -1,12 +1,12 @@
-# Frontend SG
-resource "aws_security_group" "frontend-sg" {
-  name        = "Frontend-SG"
-  description = "Security Group for Frontend created by terraform"
+# Admin SG
+resource "aws_security_group" "admin-sg" {
+  name        = "Admin-SG"
+  description = "Security Group for Admin created by terraform"
   vpc_id      = var.vpc-id
 
   ingress = [
     {
-      description      = "allow fe alb access"
+      description      = "allow admin alb access"
       from_port        = 80
       to_port          = 80
       protocol         = "tcp"
@@ -78,19 +78,19 @@ resource "aws_security_group" "frontend-sg" {
   ]
 
   tags = {
-    Name = "Frontend Security Group"
+    Name = "Admin Security Group"
 
   }
 
 }
 
-resource "aws_instance" "frontend" {
+resource "aws_instance" "admin" {
   count                  = length(var.frontend_subnet_ids)
   ami                    = var.ubuntu_ami
   instance_type          = "t2.micro"
   key_name               = var.ssh_key_name
   subnet_id              = var.frontend_subnet_ids[count.index]
-  vpc_security_group_ids = [aws_security_group.frontend-sg.id]
+  vpc_security_group_ids = [aws_security_group.admin-sg.id]
   user_data              = <<-EOF
         #!/bin/bash
 
@@ -136,25 +136,25 @@ resource "aws_instance" "frontend" {
 
         sudo mkdir -p /var/log/nginx
 
-        docker run -d --restart always \
-        -e "APP_MERCHANT=DEFAULT" \
-        -e "APP_BASE_URL=http://${var.alb_be_dns}:8080" \
-        -p 80:80 \
-        -v /var/log/nginx:/var/log/nginx \
-        ht04/shopizer-shop:1.0.1
-EOF
+        docker run -d  --restart always \
+        -e "APP_BASE_URL=http://${var.alb_be_dns}:8080/api"  \
+        -p 82:80 \
+        -v /var/log/nginx:/var/log/nginx  \
+        ht04/shopizer-admin:1.0.1
+
+        EOF
 
   tags = {
-    Name = "Frontend ${count.index + 1} creating by terraform"
+    Name = "Admin ${count.index + 1} creating by terraform"
   }
 
-  depends_on = [aws_security_group.frontend-sg, aws_instance.backend]
+  depends_on = [aws_security_group.admin-sg, aws_instance.backend]
 }
 
 # create target group
-resource "aws_lb_target_group" "frontend_tg" {
-  name     = "frontend-tg"
-  port     = 80
+resource "aws_lb_target_group" "admin_tg" {
+  name     = "admin-tg"
+  port     = 82
   protocol = "HTTP"
   vpc_id   = var.vpc-id
   health_check {
@@ -172,21 +172,21 @@ resource "aws_lb_target_group" "frontend_tg" {
 }
 
 # create target attachment
-resource "aws_lb_target_group_attachment" "attach-frontend" {
-  count            = length(aws_instance.frontend)
-  target_group_arn = aws_lb_target_group.frontend_tg.arn
-  target_id        = aws_instance.frontend[count.index].id
-  port             = 80
+resource "aws_lb_target_group_attachment" "attach-admin" {
+  count            = length(aws_instance.admin)
+  target_group_arn = aws_lb_target_group.admin_tg.arn
+  target_id        = aws_instance.admin[count.index].id
+  port             = 82
 }
 
 # create listener
-resource "aws_lb_listener" "fe_listener" {
+resource "aws_lb_listener" "admin_listener" {
   load_balancer_arn = var.alb_fe_arn
-  port              = "80"
+  port              = "82"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.frontend_tg.arn
+    target_group_arn = aws_lb_target_group.admin_tg.arn
   }
 }

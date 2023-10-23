@@ -2,7 +2,7 @@
 variable "aws_region" {
   description = "Region for this infras"
   type        = string
-  default     = "ap-southeast-1"
+  default     = "us-east-1"
 }
 
 variable "vpc_cidr" {
@@ -10,7 +10,6 @@ variable "vpc_cidr" {
   type        = string
   default     = "172.20.0.0/16"
 }
-
 
 variable "public_subnet_cidrs" {
   description = "Public subnet CIDR"

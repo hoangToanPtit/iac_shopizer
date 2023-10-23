@@ -37,7 +37,7 @@ resource "aws_instance" "nat_instance" {
   }
 
   tags = {
-    Name        = "NAT instance"
+    Name        = "NAT instance ${count.index + 1}"
     Description = ""
   }
 
