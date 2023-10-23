@@ -16,11 +16,6 @@ variable "nat_ami" {
   default     = "ami-036fb5fe12bc53979"
 }
 
-variable "instance_type" {
-  description = "instance type"
-  default     = "t2.micro"
-}
-
 variable "internet_cidr" {
   description = "cidr block for internet"
   type        = string
@@ -29,7 +24,6 @@ variable "internet_cidr" {
 
 variable "ssh_key_name" {
   type    = string
-  default = "keypair-l2"
 }
 
 variable "frontend_subnet_cidrs" {
@@ -50,8 +44,4 @@ variable "database_subnet_cidrs" {
   description = "Subnet for frontend"
   type        = list(string)
   default     = ["172.20.7.0/24"]
-}
-
-variable "tcp_protocol" {
-  default = "tcp"
 }

@@ -9,7 +9,7 @@ resource "aws_security_group" "nat_sg" {
       description      = "Ingress CIDR"
       from_port        = 80
       to_port          = 80
-      protocol         = var.tcp_protocol
+      protocol         = "tcp"
       cidr_blocks      = [var.vpc_cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
@@ -20,7 +20,7 @@ resource "aws_security_group" "nat_sg" {
       description      = "Allow access to internet"
       from_port        = 443
       to_port          = 443
-      protocol         = var.tcp_protocol
+      protocol         = "tcp"
       cidr_blocks      = [var.vpc_cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
@@ -34,7 +34,7 @@ resource "aws_security_group" "nat_sg" {
       description      = "Allow access to internet"
       from_port        = 80
       to_port          = 80
-      protocol         = var.tcp_protocol
+      protocol         = "tcp"
       cidr_blocks      = [var.internet_cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
@@ -45,7 +45,7 @@ resource "aws_security_group" "nat_sg" {
       description      = "Allow access to internet"
       from_port        = 443
       to_port          = 443
-      protocol         = var.tcp_protocol
+      protocol         = "tcp"
       cidr_blocks      = [var.internet_cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []

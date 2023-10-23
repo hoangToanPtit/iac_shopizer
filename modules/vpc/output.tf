@@ -2,10 +2,6 @@ output "vpc_id" {
   value = aws_vpc.shopzer-vpc.id
 }
 
-output "default_security_group_id" {
-  value = aws_vpc.shopzer-vpc.default_security_group_id
-}
-
 output "public_subnet_ids" {
   value = [for subnet in aws_subnet.public_subnet : subnet.id]
 }
