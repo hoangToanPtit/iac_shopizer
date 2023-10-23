@@ -1,38 +1,16 @@
-# Admin SG
+# Frontend SG
 resource "aws_security_group" "admin-sg" {
-  name        = "Admin-SG"
+  name        = "AdminSG"
   description = "Security Group for Admin created by terraform"
   vpc_id      = var.vpc-id
 
   ingress = [
     {
-      description      = "allow admin alb access"
-      from_port        = 80
-      to_port          = 80
-      protocol         = "tcp"
-      cidr_blocks      = []
-      ipv6_cidr_blocks = []
-      prefix_list_ids  = []
-      security_groups  = [var.alb_fe_sg_id]
-      self             = false
-    },
-    {
-      description      = "Allow ssh access from Bastion-host"
-      from_port        = 2222
-      to_port          = 2222
-      protocol         = "tcp"
-      cidr_blocks      = []
-      ipv6_cidr_blocks = []
-      prefix_list_ids  = []
-      security_groups  = [aws_security_group.bastion-sg.id]
-      self             = false
-    },
-    {
-      description      = "all traffic"
+      description      = "Allow all traffic"
       from_port        = 0
       to_port          = 0
       protocol         = "-1"
-      cidr_blocks      = [var.internet_cidr]
+      cidr_blocks      = [var.internet-cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
@@ -42,60 +20,38 @@ resource "aws_security_group" "admin-sg" {
 
   egress = [
     {
-      description      = "Allow go to NAT port 80"
-      from_port        = 80
-      to_port          = 80
-      protocol         = "tcp"
-      cidr_blocks      = var.public_subnet_cidrs
-      ipv6_cidr_blocks = []
-      prefix_list_ids  = []
-      security_groups  = []
-      self             = false
-    },
-    {
-      description      = "Allow go to NAT port 443"
-      from_port        = 443
-      to_port          = 443
-      protocol         = "tcp"
-      cidr_blocks      = var.public_subnet_cidrs
-      ipv6_cidr_blocks = []
-      prefix_list_ids  = []
-      security_groups  = []
-      self             = false
-    },
-    {
-      description      = "all traffic"
+      description      = "Allow all traffic"
       from_port        = 0
       to_port          = 0
       protocol         = "-1"
-      cidr_blocks      = [var.internet_cidr]
+      cidr_blocks      = [var.internet-cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
       self             = false
     }
-
   ]
 
   tags = {
-    Name = "Admin Security Group"
+    Name = "Frontend Security Group"
 
   }
 
 }
 
+# admin instance
 resource "aws_instance" "admin" {
-  count                  = length(var.frontend_subnet_ids)
-  ami                    = var.ubuntu_ami
+  count                  = length(var.frontend-subnet-ids)
+  ami                    = var.ubuntu-ami
   instance_type          = "t2.micro"
-  key_name               = var.ssh_key_name
-  subnet_id              = var.frontend_subnet_ids[count.index]
+  key_name               = var.ssh-key-name
+  subnet_id              = var.frontend-subnet-ids[count.index]
   vpc_security_group_ids = [aws_security_group.admin-sg.id]
   user_data              = <<-EOF
         #!/bin/bash
 
         echo "Change default username"
-        user=shopizer
+        user=${var.default-name}
         usermod  -l $user ubuntu
         groupmod -n $user ubuntu
         usermod  -d /home/$user -m $user
@@ -105,7 +61,7 @@ resource "aws_instance" "admin" {
         perl -pi -e "s/ubuntu/$user/g;" /etc/sudoers.d/90-cloud-init-users
 
         echo "Change default port"
-        sudo perl -pi -e 's/^#?Port 22$/Port 2222/' /etc/ssh/sshd_config service
+        sudo perl -pi -e 's/^#?Port 22$/Port ${var.default-ssh-port}/' /etc/ssh/sshd_config service
         sudo systemctl restart sshd
 
         for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
@@ -137,7 +93,7 @@ resource "aws_instance" "admin" {
         sudo mkdir -p /var/log/nginx
 
         docker run -d  --restart always \
-        -e "APP_BASE_URL=http://${var.alb_be_dns}:8080/api"  \
+        -e "APP_BASE_URL=http://${var.alb-be-dns}:8080/api"  \
         -p 82:80 \
         -v /var/log/nginx:/var/log/nginx  \
         ht04/shopizer-admin:1.0.1
@@ -148,13 +104,13 @@ resource "aws_instance" "admin" {
     Name = "Admin ${count.index + 1} creating by terraform"
   }
 
-  depends_on = [aws_security_group.admin-sg, aws_instance.backend]
+  depends_on = [aws_security_group.admin-sg]
 }
 
 # create target group
-resource "aws_lb_target_group" "admin_tg" {
+resource "aws_lb_target_group" "admin-tg" {
   name     = "admin-tg"
-  port     = 82
+  port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc-id
   health_check {
@@ -174,19 +130,21 @@ resource "aws_lb_target_group" "admin_tg" {
 # create target attachment
 resource "aws_lb_target_group_attachment" "attach-admin" {
   count            = length(aws_instance.admin)
-  target_group_arn = aws_lb_target_group.admin_tg.arn
+  target_group_arn = aws_lb_target_group.admin-tg.arn
   target_id        = aws_instance.admin[count.index].id
   port             = 82
 }
 
 # create listener
 resource "aws_lb_listener" "admin_listener" {
-  load_balancer_arn = var.alb_fe_arn
+  load_balancer_arn = aws_lb.fe-alb.arn
   port              = "82"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.admin_tg.arn
+    target_group_arn = aws_lb_target_group.admin-tg.arn
   }
+
+  depends_on = [aws_lb.fe-alb, aws_lb_target_group.admin-tg]
 }

@@ -23,7 +23,7 @@ resource "aws_security_group" "bastion-sg" {
       description      = "allow traffic"
       from_port        = 0
       to_port          = 0
-      protocol         = "tcp"
+      protocol         = "-1"
       cidr_blocks      = [var.internet-cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
@@ -42,7 +42,7 @@ resource "aws_instance" "bastion-host" {
   ami                         = var.ubuntu-ami
   instance_type               = "t2.micro"
   key_name                    = var.ssh-key-name
-  subnet_id                   = var.public_subnet_ids[0]           # first public subnet
+  subnet_id                   = var.public-subnet-ids[0]           # first public subnet
   vpc_security_group_ids      = [aws_security_group.bastion-sg.id] # vpc_security_group_ids cho pb > 0.12
   associate_public_ip_address = true
 

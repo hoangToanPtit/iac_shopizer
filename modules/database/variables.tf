@@ -9,8 +9,7 @@ variable "internet-cidr" {
 }
 
 variable "ubuntu-ami" {
-  type    = string
-  default = "ami-0df7a207adb9748c7"
+  type = string
 }
 
 variable "ssh-key-name" {
@@ -21,4 +20,8 @@ variable "ssh-key-name" {
 variable "private-ip" {
   type    = string
   default = "172.20.7.47"
+}
+
+variable "database-subnet-ids" {
+  type = list(string)
 }
