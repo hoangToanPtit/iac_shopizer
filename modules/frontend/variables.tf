@@ -6,7 +6,7 @@ variable "public-subnet-ids" {
   type = list(string)
 }
 
-variable "backend-subnet-ids" {
+variable "frontend-subnet-ids" {
   type = list(string)
 }
 
@@ -33,4 +33,8 @@ variable "ubuntu-ami" {
 variable "default-ssh-port" {
   type    = string
   default = "2222"
+}
+
+variable "alb-be-dns" {
+  type = string
 }

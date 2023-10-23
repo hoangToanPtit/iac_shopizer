@@ -12,7 +12,7 @@ resource "aws_internet_gateway" "main-igw" {
 
 # Network interface
 resource "aws_network_interface" "network_interface" {
-  count             = length(var.public_subnet_cidrs)
+  count             = length(var.public-subnet-cidrs)
   subnet_id         = aws_subnet.public_subnet[count.index].id
   security_groups   = [aws_security_group.nat_sg.id]
   source_dest_check = false
@@ -27,10 +27,10 @@ resource "aws_network_interface" "network_interface" {
 
 # NAT instance
 resource "aws_instance" "nat_instance" {
-  count         = length(var.public_subnet_cidrs)
-  ami           = var.nat_ami
+  count         = length(var.public-subnet-cidrs)
+  ami           = var.nat-ami
   instance_type = "t2.micro"
-  key_name      = var.ssh_key_name
+  key_name      = var.ssh-key-name
   network_interface {
     network_interface_id = aws_network_interface.network_interface[count.index].id
     device_index         = 0

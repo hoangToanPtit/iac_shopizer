@@ -39,8 +39,8 @@ resource "aws_security_group" "database-sg" {
 }
 
 resource "aws_network_interface" "database-ni" {
-  subnet_id       = var.database_subnet_ids[0]
-  private_ips     = [var.var.private-ip]
+  subnet_id       = var.database-subnet-ids[0]
+  private_ips     = [var.private-ip]
   security_groups = [aws_security_group.database-sg.id]
   tags = {
     Name        = "db-ni"
