@@ -46,3 +46,7 @@ variable "nat-sg-id" {
 variable "bastion-sg-id" {
   type = string
 }
+
+variable "frontend-subnet-cidrs" {
+  type = list(string)
+}

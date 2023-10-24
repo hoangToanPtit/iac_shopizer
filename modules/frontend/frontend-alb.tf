@@ -18,8 +18,8 @@ resource "aws_security_group" "fe-alb-sg" {
     },
     {
       description      = "Allow all traffic port 443"
-      from_port        = 443
-      to_port          = 443
+      from_port        = 82
+      to_port          = 82
       protocol         = "tcp"
       cidr_blocks      = [var.internet-cidr]
       ipv6_cidr_blocks = []
@@ -35,7 +35,7 @@ resource "aws_security_group" "fe-alb-sg" {
       from_port        = 80
       to_port          = 80
       protocol         = "tcp"
-      cidr_blocks      = var.frontend-subnet-ids
+      cidr_blocks      = var.frontend-subnet-cidrs
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
@@ -46,7 +46,7 @@ resource "aws_security_group" "fe-alb-sg" {
       from_port        = 82
       to_port          = 82
       protocol         = "tcp"
-      cidr_blocks      = var.frontend-subnet-ids
+      cidr_blocks      = var.frontend-subnet-cidrs
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []

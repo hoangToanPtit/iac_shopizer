@@ -21,3 +21,11 @@ output "database-subnet-ids" {
 output "nat-sg-id" {
   value = aws_security_group.nat-sg.id
 }
+
+output "backend-subnet-cidrs" {
+  value = var.backend-subnet-cidrs
+}
+
+output "frontend-subnet-cidrs" {
+  value = var.frontend-subnet-cidrs
+}

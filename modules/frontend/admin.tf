@@ -24,7 +24,7 @@ resource "aws_security_group" "admin-sg" {
       cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = [aws_security_group.fe-alb-sg]
+      security_groups  = [aws_security_group.fe-alb-sg.id]
       self             = false
     }
   ]

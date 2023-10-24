@@ -46,3 +46,7 @@ variable "bastion-sg-id" {
 variable "database-sg-id" {
   type = string
 }
+
+variable "backend-subnet-cidrs" {
+  type = list(string)
+}

@@ -34,6 +34,6 @@ variable "bastion-sg-id" {
   type = string
 }
 
-variable "backend-subnet-ids" {
+variable "backend-subnet-cidrs" {
   type = list(string)
 }

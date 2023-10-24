@@ -17,14 +17,14 @@ resource "aws_security_group" "frontend-sg" {
       self             = false
     },
     {
-      description      = "Allow to fe-alb"
+      description      = "Allow from fe-alb"
       from_port        = 80
       to_port          = 80
       protocol         = "tcp"
       cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = [aws_security_group.fe-alb-sg]
+      security_groups  = [aws_security_group.fe-alb-sg.id]
       self             = false
     }
   ]
@@ -56,8 +56,9 @@ resource "aws_security_group" "frontend-sg" {
 
   tags = {
     Name = "Frontend Security Group"
-
   }
+
+  depends_on = [aws_security_group.fe-alb-sg]
 
 }
 
