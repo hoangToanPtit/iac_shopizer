@@ -13,3 +13,8 @@ output "be-alb-arn" {
 output "be-alb-sg-id" {
   value = aws_security_group.be-alb-sg.id
 }
+
+output "backend_instance_ids" {
+  value = aws_instance.backend.*.id
+  description = "List of IDs of the backend instances"
+}

@@ -69,5 +69,9 @@ module "frontend" {
 # Cloudwatch module
 module "cloudwatch" {
   source = "./modules/cloudwatch"
+  frontend_instance_ids = module.frontend.frontend_instance_ids
+  admin_instance_ids = module.frontend.admin_instance_ids
+  backend_instance_ids =  module.backend.backend_instance_ids
+  
   depends_on = [module.frontend, module.backend]
 }

@@ -4,8 +4,8 @@ resource "aws_cloudwatch_log_metric_filter" "http_200_fe" {
   log_group_name = "fe-access.log"
 
   metric_transformation {
-    name      = "HTTP_Request"
-    namespace = "http_200_fe"
+    name      = "http_200_fe"
+    namespace = "Frontend_Metric"
     value     = "1"
   }
 }
@@ -16,8 +16,8 @@ resource "aws_cloudwatch_log_metric_filter" "http_5xx_fe" {
   log_group_name = "fe-access.log"
 
   metric_transformation {
-    name      = "HTTP_Request"
-    namespace = "Http_5xx_fe"
+    name      = "Http_5xx_fe"
+    namespace = "Frontend_Metric"
     value     = "1"
   }
 }
@@ -28,8 +28,8 @@ resource "aws_cloudwatch_log_metric_filter" "http_4xx_fe" {
   log_group_name = "fe-access.log"
 
   metric_transformation {
-    name      = "HTTP_Request"
-    namespace = "http_4xx_fe"
+    name      = "http_4xx_fe"
+    namespace = "Frontend_Metric"
     value     = "1"
   }
 }
@@ -40,8 +40,8 @@ resource "aws_cloudwatch_log_metric_filter" "http_latency_fe" {
   log_group_name = "fe-access.log"
 
   metric_transformation {
-    name      = "HTTP_Request"
-    namespace = "http_latency_fe"
+    name      = "http_latency_fe"
+    namespace = "Frontend_Metric"
     value     = "$request_time"
   }
 }
@@ -52,8 +52,8 @@ resource "aws_cloudwatch_log_metric_filter" "http_request_fe" {
   log_group_name = "fe-access.log"
 
   metric_transformation {
-    name      = "HTTP_Request"
-    namespace = "http_request_fe"
+    name      = "http_request_fe"
+    namespace = "Frontend_Metric"
     value     = "1"
   }
 }

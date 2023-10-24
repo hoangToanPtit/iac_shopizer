@@ -1,11 +1,11 @@
 resource "aws_cloudwatch_log_metric_filter" "http_request_be" {
-  name           = "http_request"
+  name           = "http_request_be"
   pattern        = "\"http-nio\""
   log_group_name = "backend.log"
 
   metric_transformation {
-    name      = "Backend_Metric"
-    namespace = "http_request_be"
+    name      = "http_request_be"
+    namespace = "Backend_Metric"
     value     = "1"
   }
 }
@@ -16,8 +16,8 @@ resource "aws_cloudwatch_log_metric_filter" "http_request_error" {
   log_group_name = "backend.log"
 
   metric_transformation {
-    name      = "Backend_Metric"
-    namespace = "http_request_error_be"
+    name      = "http_request_error_be"
+    namespace = "Backend_Metric"
     value     = "1"
   }
 }
@@ -28,8 +28,8 @@ resource "aws_cloudwatch_log_metric_filter" "number_exception" {
   log_group_name = "backend.log"
 
   metric_transformation {
-    name      = "Backend_Metric"
-    namespace = "number_exception_be"
+    name      = "number_exception_be"
+    namespace = "Backend_Metric"
     value     = "1"
   }
 }
