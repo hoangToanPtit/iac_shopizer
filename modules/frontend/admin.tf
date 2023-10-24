@@ -39,6 +39,11 @@ resource "aws_security_group" "admin-sg" {
 
 }
 
+# log group
+resource "aws_cloudwatch_log_group" "adm-log-group" {
+  name = "adm-access.log"
+}
+
 # admin instance
 resource "aws_instance" "admin" {
   count                  = length(var.frontend-subnet-ids)
@@ -126,7 +131,7 @@ resource "aws_instance" "admin" {
             "collect_list": [
               {
                 "file_path": "/var/log/nginx/access.log",
-                "log_group_name": "admin-access.log",
+                "log_group_name": "adm-access.log",
                 "log_stream_name": "{instance_id}",
                 "retention_in_days": -1
               },

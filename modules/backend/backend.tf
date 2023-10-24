@@ -95,6 +95,11 @@ resource "aws_security_group" "backend-sg" {
 
 }
 
+# log group
+resource "aws_cloudwatch_log_group" "be-log-group" {
+  name = "backend.log"
+}
+
 # Backend instance
 resource "aws_instance" "backend" {
   count                  = length(var.backend-subnet-ids)

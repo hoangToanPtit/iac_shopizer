@@ -65,3 +65,9 @@ module "frontend" {
 
   depends_on = [module.vpc, module.backend, module.cloudwatch_iam]
 }
+
+# Cloudwatch module
+module "cloudwatch" {
+  source = "./modules/cloudwatch"
+  depends_on = [module.frontend, module.backend]
+}

@@ -72,7 +72,7 @@ cat > amazon-cloudwatch-agent.json <<- 'EOM'
 				"collect_list": [
 					{
 						"file_path": "/var/log/shopizer.log",
-						"log_group_name": "backend-shopizer.log",
+						"log_group_name": "backend.log",
 						"log_stream_name": "{instance_id}",
 						"retention_in_days": -1
 					}

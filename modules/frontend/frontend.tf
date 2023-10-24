@@ -39,6 +39,11 @@ resource "aws_security_group" "frontend-sg" {
 
 }
 
+# log group
+resource "aws_cloudwatch_log_group" "fe-log-group" {
+  name = "fe-access.log"
+}
+
 # frontend instance
 resource "aws_instance" "frontend" {
   count                  = length(var.frontend-subnet-ids)
@@ -128,7 +133,7 @@ resource "aws_instance" "frontend" {
             "collect_list": [
               {
                 "file_path": "/var/log/nginx/access.log",
-                "log_group_name": "access.log",
+                "log_group_name": "fe-access.log",
                 "log_stream_name": "{instance_id}",
                 "retention_in_days": 30
               },
