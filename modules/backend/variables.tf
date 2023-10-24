@@ -34,3 +34,8 @@ variable "default-ssh-port" {
   type    = string
   default = "2222"
 }
+
+variable "cloudwatch_instance_profile_name" {
+  description = "Name of the CloudWatch IAM instance profile"
+  type        = string
+}

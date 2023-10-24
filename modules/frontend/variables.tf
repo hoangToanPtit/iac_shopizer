@@ -38,3 +38,8 @@ variable "default-ssh-port" {
 variable "alb-be-dns" {
   type = string
 }
+
+variable "cloudwatch_instance_profile_name" {
+  description = "Name of the CloudWatch IAM instance profile"
+  type        = string
+}

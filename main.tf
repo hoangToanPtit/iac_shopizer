@@ -25,6 +25,11 @@ module "bastion" {
   depends_on = [module.vpc]
 }
 
+# cloudwatch-iam-role
+module "cloudwatch_iam" {
+  source = "./modules/iam-role"
+}
+
 # Database module
 module "database" {
   source              = "./modules/database"
@@ -43,8 +48,9 @@ module "backend" {
   public-subnet-ids  = module.vpc.public-subnet-ids
   backend-subnet-ids = module.vpc.backend-subnet-ids
   ubuntu-ami         = "ami-0fc5d935ebf8bc3bc"
+  cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
 
-  depends_on = [module.vpc]
+  depends_on = [module.vpc, module.cloudwatch_iam]
 }
 
 # Frontend module
@@ -55,6 +61,7 @@ module "frontend" {
   frontend-subnet-ids = module.vpc.frontend-subnet-ids
   alb-be-dns          = module.backend.be-dns-name
   ubuntu-ami          = "ami-0fc5d935ebf8bc3bc"
+  cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
 
-  depends_on = [module.vpc, module.backend]
+  depends_on = [module.vpc, module.backend, module.cloudwatch_iam]
 }
