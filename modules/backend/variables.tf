@@ -34,3 +34,15 @@ variable "default-ssh-port" {
   type    = string
   default = "2222"
 }
+
+variable "nat-sg-id" {
+  type = string
+}
+
+variable "bastion-sg-id" {
+  type = string
+}
+
+variable "database-sg-id" {
+  type = string
+}

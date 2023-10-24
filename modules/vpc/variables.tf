@@ -33,7 +33,7 @@ variable "frontend-subnet-cidrs" {
 }
 
 variable "backend-subnet-cidrs" {
-  description = "Subnet for frontend"
+  description = "Subnet for backend"
   type        = list(string)
   default     = ["172.20.5.0/24", "172.20.6.0/24"]
 

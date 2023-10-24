@@ -6,28 +6,50 @@ resource "aws_security_group" "frontend-sg" {
 
   ingress = [
     {
-      description      = "Allow all traffic"
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
-      cidr_blocks      = [var.internet-cidr]
+      description      = "allow Bastion SSH"
+      from_port        = 2222
+      to_port          = 2222
+      protocol         = "tcp"
+      cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = []
+      security_groups  = [var.bastion-sg-id]
+      self             = false
+    },
+    {
+      description      = "Allow to fe-alb"
+      from_port        = 80
+      to_port          = 80
+      protocol         = "tcp"
+      cidr_blocks      = []
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = [aws_security_group.fe-alb-sg]
       self             = false
     }
   ]
 
   egress = [
     {
-      description      = "Allow all traffic"
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
-      cidr_blocks      = [var.internet-cidr]
+      description      = "allow Nat port 80"
+      from_port        = 80
+      to_port          = 80
+      protocol         = "tcp"
+      cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = []
+      security_groups  = [var.nat-sg-id]
+      self             = false
+    },
+    {
+      description      = "allow Nat port 443"
+      from_port        = 443
+      to_port          = 443
+      protocol         = "tcp"
+      cidr_blocks      = []
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = [var.nat-sg-id]
       self             = false
     }
   ]
