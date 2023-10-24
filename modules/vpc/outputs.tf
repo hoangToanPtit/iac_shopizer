@@ -17,3 +17,7 @@ output "backend-subnet-ids" {
 output "database-subnet-ids" {
   value = [for subnet in aws_subnet.database_subnet : subnet.id]
 }
+
+output "nat-sg-id" {
+  value = aws_security_group.nat-sg.id
+}

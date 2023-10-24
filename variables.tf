@@ -17,7 +17,7 @@ variable "public-subnet-cidrs" {
   default     = ["172.20.1.0/24", "172.20.2.0/24"]
 }
 
-variable "frontend-subnet-cid-s" {
+variable "frontend-subnet-cidrs" {
   description = "Subnet for frontend"
   type        = list(string)
   default     = ["172.20.3.0/24", "172.20.4.0/24"]

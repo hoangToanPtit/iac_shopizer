@@ -25,3 +25,15 @@ variable "private-ip" {
 variable "database-subnet-ids" {
   type = list(string)
 }
+
+variable "nat-sg-id" {
+  type = string
+}
+
+variable "bastion-sg-id" {
+  type = string
+}
+
+variable "backend-subnet-ids" {
+  type = list(string)
+}

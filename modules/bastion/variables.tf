@@ -24,3 +24,9 @@ variable "default-name" {
 variable "public-subnet-ids" {
   type = list(string)
 }
+
+variable "vpc-cidr" {
+  description = "VPC CIDR"
+  type        = string
+  default     = "172.20.0.0/16"
+}

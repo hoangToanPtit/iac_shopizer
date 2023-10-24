@@ -14,7 +14,7 @@ resource "aws_internet_gateway" "main-igw" {
 resource "aws_network_interface" "network_interface" {
   count             = length(var.public-subnet-cidrs)
   subnet_id         = aws_subnet.public_subnet[count.index].id
-  security_groups   = [aws_security_group.nat_sg.id]
+  security_groups   = [aws_security_group.nat-sg.id]
   source_dest_check = false
 
   tags = {
@@ -22,7 +22,7 @@ resource "aws_network_interface" "network_interface" {
     Description = "network interface to create nat instance"
   }
 
-  depends_on = [aws_subnet.public_subnet, aws_security_group.nat_sg]
+  depends_on = [aws_subnet.public_subnet, aws_security_group.nat-sg]
 }
 
 # NAT instance

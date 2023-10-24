@@ -1,5 +1,5 @@
 # NAT instance SG
-resource "aws_security_group" "nat_sg" {
+resource "aws_security_group" "nat-sg" {
   name        = "NAT_instance_security_group"
   description = "Security Group for NAT insance created by terraform"
   vpc_id      = aws_vpc.shopzer-vpc.id

@@ -6,10 +6,10 @@ resource "aws_security_group" "bastion-sg" {
 
   ingress = [
     {
-      description      = "allow traffic"
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
+      description      = "allow SSH from local"
+      from_port        = 22
+      to_port          = 22
+      protocol         = "tcp"
       cidr_blocks      = [var.internet-cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
@@ -20,11 +20,11 @@ resource "aws_security_group" "bastion-sg" {
 
   egress = [
     {
-      description      = "allow traffic"
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
-      cidr_blocks      = [var.internet-cidr]
+      description      = "SSH to DB, BE, FE, Admin"
+      from_port        = 2222
+      to_port          = 2222
+      protocol         = "tcp"
+      cidr_blocks      = [var.vpc-cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []

@@ -32,8 +32,11 @@ module "database" {
   private-ip          = "172.20.7.47"
   database-subnet-ids = module.vpc.database-subnet-ids
   ubuntu-ami          = "ami-0fc5d935ebf8bc3bc"
+  nat-sg-id           = module.vpc.nat-sg-id
+  bastion-sg-id       = module.bastion.bastion-sg-id
+  backend-subnet-ids  = module.vpc.backend-subnet-ids
 
-  depends_on = [module.vpc]
+  depends_on = [module.bastion]
 }
 
 # Backend module
@@ -43,8 +46,10 @@ module "backend" {
   public-subnet-ids  = module.vpc.public-subnet-ids
   backend-subnet-ids = module.vpc.backend-subnet-ids
   ubuntu-ami         = "ami-0fc5d935ebf8bc3bc"
-
-  depends_on = [module.vpc]
+  nat-sg-id          = module.vpc.nat-sg-id
+  bastion-sg-id      = module.bastion.bastion-sg-id
+  database-sg-id     = module.database.database-sg-id
+  depends_on         = [module.database]
 }
 
 # Frontend module
@@ -55,6 +60,7 @@ module "frontend" {
   frontend-subnet-ids = module.vpc.frontend-subnet-ids
   alb-be-dns          = module.backend.be-dns-name
   ubuntu-ami          = "ami-0fc5d935ebf8bc3bc"
-
-  depends_on = [module.vpc, module.backend]
+  nat-sg-id           = module.vpc.nat-sg-id
+  bastion-sg-id       = module.bastion.bastion-sg-id
+  depends_on          = [module.backend]
 }

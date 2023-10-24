@@ -38,3 +38,11 @@ variable "default-ssh-port" {
 variable "alb-be-dns" {
   type = string
 }
+
+variable "nat-sg-id" {
+  type = string
+}
+
+variable "bastion-sg-id" {
+  type = string
+}

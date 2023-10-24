@@ -6,11 +6,22 @@ resource "aws_security_group" "fe-alb-sg" {
 
   ingress = [
     {
-      description      = "Allow all traffic"
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
-      cidr_blocks      = ["0.0.0.0/0"]
+      description      = "Allow all traffic port 80"
+      from_port        = 80
+      to_port          = 80
+      protocol         = "tcp"
+      cidr_blocks      = [var.internet-cidr]
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow all traffic port 443"
+      from_port        = 443
+      to_port          = 443
+      protocol         = "tcp"
+      cidr_blocks      = [var.internet-cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
@@ -20,11 +31,22 @@ resource "aws_security_group" "fe-alb-sg" {
 
   egress = [
     {
-      description      = "Allow all traffic"
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
-      cidr_blocks      = [var.internet-cidr]
+      description      = "Allow to FE port 80"
+      from_port        = 80
+      to_port          = 80
+      protocol         = "tcp"
+      cidr_blocks      = var.frontend-subnet-ids
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow to Admin port 82"
+      from_port        = 82
+      to_port          = 82
+      protocol         = "tcp"
+      cidr_blocks      = var.frontend-subnet-ids
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
