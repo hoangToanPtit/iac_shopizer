@@ -25,6 +25,11 @@ module "bastion" {
   depends_on = [module.vpc]
 }
 
+# cloudwatch-iam-role
+module "cloudwatch_iam" {
+  source = "./modules/iam-role"
+}
+
 # Database module
 module "database" {
   source               = "./modules/database"
@@ -41,30 +46,42 @@ module "database" {
 
 # Backend module
 module "backend" {
-  source               = "./modules/backend"
-  vpc-id               = module.vpc.vpc-id
-  public-subnet-ids    = module.vpc.public-subnet-ids
-  backend-subnet-ids   = module.vpc.backend-subnet-ids
-  ubuntu-ami           = "ami-0fc5d935ebf8bc3bc"
-  nat-sg-id            = module.vpc.nat-sg-id
-  bastion-sg-id        = module.bastion.bastion-sg-id
-  database-sg-id       = module.database.database-sg-id
-  backend-subnet-cidrs = module.vpc.backend-subnet-cidrs
+  source                           = "./modules/backend"
+  vpc-id                           = module.vpc.vpc-id
+  public-subnet-ids                = module.vpc.public-subnet-ids
+  backend-subnet-ids               = module.vpc.backend-subnet-ids
+  ubuntu-ami                       = "ami-0fc5d935ebf8bc3bc"
+  nat-sg-id                        = module.vpc.nat-sg-id
+  bastion-sg-id                    = module.bastion.bastion-sg-id
+  database-sg-id                   = module.database.database-sg-id
+  backend-subnet-cidrs             = module.vpc.backend-subnet-cidrs
+  cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
 
-  depends_on = [module.vpc, module.bastion, module.database]
+  depends_on = [module.vpc, module.bastion, module.database, module.cloudwatch_iam]
+
 }
 
 # Frontend module
 module "frontend" {
-  source                = "./modules/frontend"
-  vpc-id                = module.vpc.vpc-id
-  public-subnet-ids     = module.vpc.public-subnet-ids
-  frontend-subnet-ids   = module.vpc.frontend-subnet-ids
-  alb-be-dns            = module.backend.be-dns-name
-  ubuntu-ami            = "ami-0fc5d935ebf8bc3bc"
-  nat-sg-id             = module.vpc.nat-sg-id
-  bastion-sg-id         = module.bastion.bastion-sg-id
-  frontend-subnet-cidrs = module.vpc.frontend-subnet-cidrs
+  source                           = "./modules/frontend"
+  vpc-id                           = module.vpc.vpc-id
+  public-subnet-ids                = module.vpc.public-subnet-ids
+  frontend-subnet-ids              = module.vpc.frontend-subnet-ids
+  alb-be-dns                       = module.backend.be-dns-name
+  ubuntu-ami                       = "ami-0fc5d935ebf8bc3bc"
+  nat-sg-id                        = module.vpc.nat-sg-id
+  bastion-sg-id                    = module.bastion.bastion-sg-id
+  frontend-subnet-cidrs            = module.vpc.frontend-subnet-cidrs
+  cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
 
-  depends_on = [module.vpc, module.bastion, module.backend]
+  depends_on = [module.vpc, module.bastion, module.backend, module.cloudwatch_iam]
+}
+
+module "cloudwatch" {
+  source                = "./modules/cloudwatch"
+  frontend_instance_ids = module.frontend.frontend_instance_ids
+  admin_instance_ids    = module.frontend.admin_instance_ids
+  backend_instance_ids  = module.backend.backend_instance_ids
+
+  depends_on = [module.frontend, module.backend]
 }

@@ -50,3 +50,8 @@ variable "database-sg-id" {
 variable "backend-subnet-cidrs" {
   type = list(string)
 }
+
+variable "cloudwatch_instance_profile_name" {
+  description = "Name of the CloudWatch IAM instance profile"
+  type        = string
+}

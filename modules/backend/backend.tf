@@ -129,6 +129,11 @@ resource "aws_security_group" "backend-sg" {
 
 }
 
+# log group
+resource "aws_cloudwatch_log_group" "be-log-group" {
+  name = "backend.log"
+}
+
 # Backend instance
 resource "aws_instance" "backend" {
   count                  = length(var.backend-subnet-ids)
@@ -137,6 +142,7 @@ resource "aws_instance" "backend" {
   key_name               = var.ssh-key-name
   subnet_id              = var.backend-subnet-ids[count.index]
   vpc_security_group_ids = [aws_security_group.backend-sg.id]
+  iam_instance_profile   = var.cloudwatch_instance_profile_name
   user_data              = file("${path.module}/beinstance.sh")
 
   tags = {
